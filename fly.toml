@@ -1,5 +1,5 @@
 
-app = "coji-app-1"
+app = "coji-litefs-speedrun"
 kill_signal = "SIGINT"
 kill_timeout = 5
 primary_region = "nrt"
@@ -7,6 +7,10 @@ processes = []
 
 [env]
   PORT = "8080"
+
+[mounts]
+  source = "litefs"
+  destination = "/var/lib/litefs"
 
 [deploy]
 release_command = "npx prisma migrate deploy"

@@ -4,7 +4,7 @@ ARG PNPM_VERSION=8.6.1
 
 # Install openssl for Prisma
 RUN apt-get update \
-  && apt-get install --no-install-recommends -y openssl procps vim-tiny sqlite3 \
+  && apt-get install --no-install-recommends -y openssl procps vim-tiny sqlite3 ca-certificates fuse3 \
   && apt-get clean \
   && npm i -g pnpm@${PNPM_VERSION} \
   && rm -rf /var/lib/apt/lists/*
@@ -56,5 +56,6 @@ COPY --from=build /app/tsconfig.json /app/tsconfig.json
 COPY --from=build /app/prisma /app/prisma
 COPY --from=build /app/build /app/build
 COPY --from=build /app/public /app/public
+COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
 
-CMD ["pnpm", "start"]
+CMD ["litefs", "mount"]
