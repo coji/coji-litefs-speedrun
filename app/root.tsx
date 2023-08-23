@@ -1,7 +1,6 @@
 import { json, type LinksFunction, type LoaderArgs, type V2_MetaFunction } from '@remix-run/node'
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
 import { createHead } from 'remix-island'
-import { authenticator } from './services/auth.server'
 import globalStyles from './styles/globals.css'
 
 export const meta: V2_MetaFunction = () => [
@@ -15,10 +14,7 @@ export const links: LinksFunction = () => [{ rel: 'stylesheet', href: globalStyl
 
 export const loader = async ({ request }: LoaderArgs) => {
   //  keepAwake()
-  const sessionUser = await authenticator.isAuthenticated(request)
-  return json({
-    user: sessionUser,
-  })
+  return json({})
 }
 
 export const Head = createHead(() => (

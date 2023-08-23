@@ -1,6 +1,5 @@
 import { Link } from '@remix-run/react'
-import { Heading, Spacer } from '~/components/ui'
-import { AppLoginPane } from './AppLoginPane'
+import { Heading } from '~/components/ui'
 
 export const AppHeader = () => {
   return (
@@ -9,8 +8,6 @@ export const AppHeader = () => {
         <Heading>
           <Link to="/">App</Link>
         </Heading>
-        <Spacer />
-        <AppLoginPane />
       </div>
     </header>
   )
