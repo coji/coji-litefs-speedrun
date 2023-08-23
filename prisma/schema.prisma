@@ -10,12 +10,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int     @id @default(autoincrement())
-  email       String  @unique
-  displayName String
-  photoUrl    String?
-
-  updatedAt DateTime @updatedAt
+model Message {
+  id        String   @id @default(uuid())
+  text      String
+  machine   String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
