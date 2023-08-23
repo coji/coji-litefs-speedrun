@@ -20,7 +20,8 @@ import { addMessage, deleteAllMessages, listMessages } from '~/models/message.se
 
 export const loader = async (args: LoaderArgs) => {
   const messages = await listMessages()
-  return json({ messages })
+  const machineId = process.env.FLY_MACHINE_ID
+  return json({ messages, machineId })
 }
 
 export const action = async ({ request }: ActionArgs) => {
@@ -28,11 +29,12 @@ export const action = async ({ request }: ActionArgs) => {
     request,
     z.object({ message: z.string(), intent: z.enum(['send', 'reset']) }),
   )
+  const machineId = process.env.FLY_MACHINE_ID
 
   if (intent === 'send') {
     await addMessage({
       text: message,
-      machine: process.env.FLY_MACHINE_ID ?? 'unknown',
+      machine: machineId,
     })
     return json({})
   }
@@ -46,7 +48,7 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 export default function IndexPage() {
-  const { messages } = useLoaderData<typeof loader>()
+  const { messages, machineId } = useLoaderData<typeof loader>()
   const navigation = useNavigation()
 
   useEffect(() => {
@@ -60,21 +62,24 @@ export default function IndexPage() {
   return (
     <div className="flex h-screen flex-col bg-slate-200">
       <AppHeader>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm" variant="destructive">
-              Reset
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>Are you sure?</DialogHeader>
-            <DialogFooter>
-              <Button variant="destructive" form="form" name="intent" value="reset">
-                Reset Database
+        <HStack>
+          <Badge>{machineId ?? 'unknown'}</Badge>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="destructive">
+                Reset
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>Are you sure?</DialogHeader>
+              <DialogFooter>
+                <Button variant="destructive" form="form" name="intent" value="reset">
+                  Reset Database
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </HStack>
       </AppHeader>
 
       <main className="container mx-auto flex flex-1 flex-col py-2">
@@ -82,11 +87,13 @@ export default function IndexPage() {
           <Stack className="flex-1">
             {messages.map((message) => {
               return (
-                <div key={message.id} className="flex gap-4 rounded bg-background px-4 py-2">
+                <div key={message.id} className="flex items-center gap-4 rounded bg-background px-4 py-2">
                   <div className="flex-1">{message.text}</div>
                   <div className="text-sm text-slate-500">{message.createdAt}</div>
                   <div>
-                    <Badge variant="outline">{message.machine}</Badge>
+                    <Badge variant={machineId === message.machine ? 'default' : 'outline'}>
+                      {message.machine ?? 'unknown'}
+                    </Badge>
                   </div>
                 </div>
               )
