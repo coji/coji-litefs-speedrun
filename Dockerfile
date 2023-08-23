@@ -48,6 +48,15 @@ RUN pnpm run build
 # Run the app
 FROM base
 
+ENV FLY="true"
+ENV LITEFS_DIR="/litefs"
+ENV DATABASE_FILENAME="data.db"
+ENV DATABASE_PATH="$LITEFS_DIR/$DATABASE_FILENAME"
+ENV DATABASE_URL="file:$DATABASE_PATH"
+ENV INTERNAL_PORT="8080"
+ENV PORT="3000"
+ENV NODE_ENV="production"
+
 WORKDIR /app
 
 COPY --from=production-deps /app/package.json /app/package.json
@@ -56,6 +65,10 @@ COPY --from=build /app/tsconfig.json /app/tsconfig.json
 COPY --from=build /app/prisma /app/prisma
 COPY --from=build /app/build /app/build
 COPY --from=build /app/public /app/public
+COPY --from=build /app/start.sh /app/start.sh
+
+# prepare for litefs
 COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
+COPY litefs.yml /etc/litefs.yml
 
 CMD ["litefs", "mount"]
