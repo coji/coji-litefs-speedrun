@@ -7,5 +7,11 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "**/node_modules": true
-  }
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.defaultInterpreterPath": "${workspaceRoot}/api/.venv/bin/python",
+  "python.analysis.extraPaths": ["${workspaceRoot}/api/.venv/site-packages?"],
+  "python.envFile": "${workspaceRoot}/api/.env"
 }
